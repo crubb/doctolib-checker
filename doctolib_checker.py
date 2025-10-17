@@ -1,9 +1,11 @@
-import urllib
-import json
-import time
 import datetime
 import http.client
+import json
+import pathlib
+import time
+import urllib
 import urllib.request
+
 import yaml
 
 # load config.yaml
@@ -81,7 +83,7 @@ def main():
                 closest_slot = get_closest_available_time_slot(json_data)
                 if closest_slot != "":
                     send_pushover_notification(
-                        f'New appointment available on Doctolib within the next {limit} days! \nNumber of available appointments: {json_data["total"]} \nEarliest appointment: {format_string_to_date(closest_slot)}'
+                        f"New appointment available on Doctolib within the next {limit} days! \nNumber of available appointments: {json_data['total']} \nEarliest appointment: {format_string_to_date(closest_slot)}"
                     )
 
             # if next available slot is before the limit date
@@ -89,7 +91,7 @@ def main():
                 json_data["next_slot"][:10], "%Y-%m-%d"
             ) <= datetime.datetime.strptime(limit_date, "%Y-%m-%d"):
                 send_pushover_notification(
-                    f'New appointment available on Doctolib within your limit time! \nEarliest appointment: {format_string_to_date(json_data["next_slot"])}'
+                    f"New appointment available on Doctolib within your limit time! \nEarliest appointment: {format_string_to_date(json_data['next_slot'])}"
                 )
 
             # send an alive message at <hour_of_alive_check> o'clock and minute 0 everyday if <alive_check> is True
