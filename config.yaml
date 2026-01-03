@@ -1,6 +1,9 @@
 run_in_loop: false
 interval_in_seconds: 60
 
+# Valid log legels: error, info, debug
+logging_level: info
+
 alive_check: true
 hour_of_alive_check: 15
 
