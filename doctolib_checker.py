@@ -16,6 +16,10 @@ with open(f"{pathlib.Path(__file__).parent.resolve()}/config.yaml", "r") as file
 limit_date = config["limit_date"]
 start_date = config["start_date"]
 
+# Validate dates upon startup
+datetime.datetime.strptime(limit_date, "%Y-%m-%d")
+datetime.datetime.strptime(start_date, "%Y-%m-%d")
+
 # max number of days in advance
 limit = config["limit"]
 
