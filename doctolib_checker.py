@@ -118,9 +118,17 @@ def main():
                 logger.debug(f"Found {json_data['total']} appointment(s), checking for closest slot within limit_date {limit_date}")
                 closest_slot = get_closest_available_time_slot(json_data, limit_date_obj)
                 if closest_slot:
+                    appointments = []
+                    for slot in json_data["availabilities"]:
+                        if slot["slots"] and datetime.datetime.strptime(slot["date"][:10], "%Y-%m-%d") <= limit_date_obj:
+                            for s in slot["slots"]:
+                                dt = format_string_to_date(s)
+                                appointments.append(f"{dt[:10]} {dt[11:16]}")
+                    appointments.sort()
+                    
                     logger.info(f"Sending notification: Found {json_data['total']} appointment(s) with closest slot {format_string_to_date(closest_slot)}")
                     send_pushover_notification(
-                        f"New appointment available on Doctolib within the next {limit} days! \nNumber of available appointments: {json_data['total']} \nEarliest appointment: {format_string_to_date(closest_slot)}"
+                        f"Found {json_data['total']} appointments available on Doctolib within {limit} day(s) from {start_date}:\n" + "\n".join(appointments)
                     )
                 else:
                     logger.debug(f"Found {json_data['total']} appointment(s) but closest slot is after limit_date {limit_date}")
@@ -132,7 +140,7 @@ def main():
                 if next_slot_date <= limit_date_obj:
                     logger.info(f"Sending notification: next_slot {format_string_to_date(json_data['next_slot'])} is within limit_date {limit_date}")
                     send_pushover_notification(
-                        f"New appointment available on Doctolib within your limit time! \nEarliest appointment: {format_string_to_date(json_data['next_slot'])}"
+                        f"New appointment available on Doctolib within your limit date! \nEarliest appointment: {format_string_to_date(json_data['next_slot'])}"
                     )
                 else:
                     logger.debug(f"next_slot {next_slot_date.date()} exceeds limit_date {limit_date_obj.date()}")
